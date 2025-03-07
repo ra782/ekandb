@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>合格発表シミュレーター</title>
+</head>
+<body>
+  <h1>合格発表シミュレーター</h1>
+  <form id="simulatorForm">
+    <label>受験人数:
+      <input type="number" id="totalCandidates" required>
+    </label>
+    <br>
+    <label>合格者数:
+      <input type="number" id="passCount" required>
+    </label>
+    <br>
+    <label>受験番号開始 (例: M1001):
+      <input type="text" id="startNumber" required>
+    </label>
+    <br>
+    <label>受験番号終了 (例: M1233):
+      <input type="text" id="endNumber" required>
+    </label>
+    <br>
+    <button type="submit">合格者を決定</button>
+  </form>
+  
+  <h2>合格発表結果</h2>
+  <pre id="result"></pre>
+
+  <script>
+    // 受験番号を生成する関数
+    function generateNumbers(startStr, endStr) {
+      // 文字部分と数字部分を分離
+      const prefix = startStr.match(/^[^\d]+/)[0];
+      const startNum = parseInt(startStr.replace(prefix, ''));
+      const endNum = parseInt(endStr.replace(prefix, ''));
+      const numbers = [];
+      for (let i = startNum; i <= endNum; i++) {
+        numbers.push(prefix + i);
+      }
+      return numbers;
+    }
+
+    // 配列からランダムに重複なく要素を抽出する関数
+    function getRandomUniqueElements(arr, count) {
+      const result = [];
+      const copy = [...arr];
+      for (let i = 0; i < count; i++) {
+        const randIndex = Math.floor(Math.random() * copy.length);
+        result.push(copy[randIndex]);
+        copy.splice(randIndex, 1);
+      }
+      return result;
+    }
+
+    // フォームの送信処理
+    document.getElementById('simulatorForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const totalCandidates = parseInt(document.getElementById('totalCandidates').value);
+      const passCount = parseInt(document.getElementById('passCount').value);
+      const startNumber = document.getElementById('startNumber').value.trim();
+      const endNumber = document.getElementById('endNumber').value.trim();
+
+      // 受験番号リストを生成
+      const numbers = generateNumbers(startNumber, endNumber);
+
+      // 入力の受験人数と番号リストの個数が一致するか確認
+      if (numbers.length !== totalCandidates) {
+        alert("入力した受験人数と受験番号の範囲が一致しません。");
+        return;
+      }
+      
+      if (passCount > totalCandidates) {
+        alert("合格者数は受験人数より多くなりません。");
+        return;
+      }
+
+      // ランダムに合格者を抽出
+      const selected = getRandomUniqueElements(numbers, passCount);
+      // 数字部分で昇順に並び替え
+      selected.sort((a, b) => {
+        const numA = parseInt(a.replace(/^[^\d]+/, ''));
+        const numB = parseInt(b.replace(/^[^\d]+/, ''));
+        return numA - numB;
+      });
+
+      // 結果を表示（各番号を改行して出力）
+      document.getElementById('result').textContent = selected.join("\n");
+    });
+  </script>
+</body>
+</html>
