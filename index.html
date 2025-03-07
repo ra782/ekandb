@@ -3,6 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <title>合格発表シミュレーター</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif; /* 全体のフォントを統一 */
+    }
+    h1 {
+      font-size: 28px; /* タイトルを少し大きく */
+    }
+    label, button {
+      font-size: 18px; /* 入力欄の文字も見やすく */
+    }
+    pre {
+      font-family: Arial, sans-serif; /* 結果のフォントを統一 */
+      font-size: 24px; /* 合格発表の文字を大きく */
+      font-weight: bold; /* 文字を少し太く */
+    }
+  </style>
 </head>
 <body>
   <h1>合格発表シミュレーター</h1>
@@ -30,9 +46,7 @@
   <pre id="result"></pre>
 
   <script>
-    // 受験番号を生成する関数（数字だけの場合も対応）
     function generateNumbers(startStr, endStr) {
-      // 先頭の文字部分を抽出。数字のみの場合はnullなので、空文字とする
       const startMatch = startStr.match(/^[^\d]+/);
       const endMatch = endStr.match(/^[^\d]+/);
       let prefix = "";
@@ -49,7 +63,6 @@
         return [];
       }
       
-      // 数字部分を取得
       const startNum = parseInt(startStr.replace(/^[^\d]+/, ''));
       const endNum = parseInt(endStr.replace(/^[^\d]+/, ''));
       
@@ -60,7 +73,6 @@
       return numbers;
     }
 
-    // 配列からランダムに重複なく要素を抽出する関数
     function getRandomUniqueElements(arr, count) {
       const result = [];
       const copy = [...arr];
@@ -72,7 +84,6 @@
       return result;
     }
 
-    // フォームの送信処理
     document.getElementById('simulatorForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -81,13 +92,11 @@
       const startNumber = document.getElementById('startNumber').value.trim();
       const endNumber = document.getElementById('endNumber').value.trim();
 
-      // 受験番号リストを生成
       const numbers = generateNumbers(startNumber, endNumber);
       if (numbers.length === 0) {
         return;
       }
 
-      // 入力された受験人数と生成された番号の個数が一致するか確認
       if (numbers.length !== totalCandidates) {
         alert("入力した受験人数と受験番号の範囲が一致しません。");
         return;
@@ -98,16 +107,13 @@
         return;
       }
 
-      // ランダムに合格者を抽出
       const selected = getRandomUniqueElements(numbers, passCount);
-      // 数字部分で昇順に並び替え
       selected.sort((a, b) => {
         const numA = parseInt(a.replace(/^[^\d]+/, ''));
         const numB = parseInt(b.replace(/^[^\d]+/, ''));
         return numA - numB;
       });
 
-      // 結果を表示（各番号を改行して出力）
       document.getElementById('result').textContent = selected.join("\n");
     });
   </script>
